@@ -1,0 +1,24 @@
+[[source]]
+name = "pypi"
+url = "https://pypi.org/simple"
+verify_ssl = true
+
+[dev-packages]
+black = "*"
+pydocstyle = "*"
+pylint = "*"
+
+[packages]
+optproblems = "*"
+numpy = "*"
+pandas = "*"
+pydoe = "*"
+scipy = "*"
+diversipy = "*"
+scikit-learn = "*"
+matplotlib = "*"
+seaborn = "*"
+flake8 = "*"
+
+[requires]
+python_version = "3.7"
