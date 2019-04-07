@@ -15,6 +15,7 @@ import pickle as pk
 from os import listdir
 import matplotlib.pyplot as plt
 from copy import copy
+import numpy as np
 
 
 def train_classifiers():
@@ -47,11 +48,17 @@ def train_classifiers():
     inputs_train, inputs_test, outputs_train, outputs_test = tts(inputs, outputs)
     target_train = outputs_train.idxmax(axis=1)
     target_test = outputs_test.idxmax(axis=1)
-
+    numruns = 50
+    temp_t = pd.DataFrame(
+        np.zeros((numruns, len(classifiers.keys()))), columns=classifiers.keys()
+    )
+    temp_p = pd.DataFrame(
+        np.zeros((numruns, len(classifiers.keys()))), columns=classifiers.keys()
+    )
     for key, value in classifiers.items():
         model = {"model": [], "cost_train": 1, "cost_test": 1, "name": key}
         print(key, "\n")
-        for i in range(50):
+        for i in range(numruns):
             clf = value()
             clf.fit(inputs_train, target_train)
             predictions = clf.predict(inputs_train)
@@ -72,11 +79,15 @@ def train_classifiers():
             for index in range(num_samples):
                 cost += cost_mat.iloc[index][predictions[index]]
             cost_test = cost / lenp
+            temp_t[key][i] = cost_train
+            temp_p[key][i] = cost_test
             if cost_test < model["cost_test"]:
                 model["model"] = clf
                 model["cost_test"] = cost_test
                 model["cost_train"] = cost_train
         pk.dump(model, open(outputfolder + key + "best.p", "wb"))
+    temp_p.to_csv("./results/classification/testcost_on_bench.csv", index=False)
+    temp_t.to_csv("./results/classification/traincost_on_bench.csv", index=False)
 
 
 def test_classifiers():
@@ -99,7 +110,7 @@ def test_classifiers():
         ]
         newR2 = copy(R2all)
         newR2["Predicted"] = R2predicted
-        newR2['files'] = data['files']
+        newR2["files"] = data["files"]
         newR2.to_csv(
             "./results/predictionsonengineering/" + key + "prediction.csv", index=False
         )
@@ -111,5 +122,5 @@ def test_classifiers():
 
 
 if __name__ == "__main__":
-    test_classifiers()
+    train_classifiers()
 

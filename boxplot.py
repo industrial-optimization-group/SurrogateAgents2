@@ -4,22 +4,28 @@ import numpy as np
 
 inputfolder = "./results/classification/"
 
-training_costs = pd.read_csv(inputfolder + "training costs.csv")
-prediction_costs = pd.read_csv(inputfolder + "prediction costs.csv")
+training_costs = pd.read_csv(inputfolder + "traincost_on_bench.csv")
+prediction_costs = pd.read_csv(inputfolder + "testcost_on_bench.csv")
 plt.rcParams.update({"font.size": 17})
 
-training_costs.boxplot()
-plt.ylim([0, 1])
+tplot = training_costs.boxplot()
+plt.ylim([0, 0.4])
 plt.xlabel("Classificaiton Algorithm")
 plt.ylabel("Cost")
-plt.title("Average cost on training set (DTLZ)")
+plt.title("Average cost on training Benchmark set")
+i = 1
+for key, value in training_costs.items():
+    y = value
+    x = np.random.normal(i, 0.04, size=len(y))
+    tplot.plot(x, y, "r.", alpha=0.5)
+    i = i + 1
 plt.show()
 
 pplot = prediction_costs.boxplot()
-plt.ylim([0, 1])
+plt.ylim([0, 0.4])
 plt.xlabel("Classificaiton Algorithm")
 plt.ylabel("Cost")
-plt.title("Average cost on prediction set (WFG)")
+plt.title("Average cost on prediction Benchmark set")
 i = 1
 for key, value in prediction_costs.items():
     y = value
